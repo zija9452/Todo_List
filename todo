@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""
+CLI Entry Point for Todo List Application
+Matches the specification: `todo add|list|update|delete|toggle`
+"""
+
+import sys
+from src.todo_app import main as todo_main
+
+if __name__ == "__main__":
+    todo_main()

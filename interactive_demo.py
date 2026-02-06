@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""
+Demo script to showcase the interactive console functionality of the Todo CLI app
+"""
+
+print("## Interactive Console Application Demo ##")
+print()
+print("The Todo CLI app now supports both modes:")
+print()
+print("1. Command-line mode (single execution):")
+print("   python src/todo_app.py add 'Complete project'")
+print("   python src/todo_app.py list")
+print()
+print("2. Interactive mode (continuous commands in one session):")
+print("   python src/todo_app.py")
+print("   > add Complete project documentation")
+print("   > list")
+print("   > update 1 Updated project documentation")
+print("   > toggle 1")
+print("   > list")
+print("   > quit")
+print()
+print("Try it yourself! Run: python src/todo_app.py")
+print()
+print("Available commands:")
+print("- add <description>           : Add a new task")
+print("- list [--sort <field>] [--order <asc|desc>] : List all tasks")
+print("- update <id> <description>   : Update a task")
+print("- delete <id>                 : Delete a task")
+print("- toggle <id>                 : Toggle completion status")
+print("- help                        : Show help message")
+print("- quit/exit                   : Exit the application")
