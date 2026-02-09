@@ -1,38 +1,198 @@
-# Evolution of Todo — Phase I (In-Memory Python CLI)
+# Full-Stack Multi-User Todo Application
 
-This is a simple command-line todo list application built with Python 3.13+ that stores tasks in memory. The application supports the core CRUD operations for managing tasks: Add, Delete, Update, View, and Mark Complete.
+A secure, full-stack todo application with JWT authentication and PostgreSQL persistence.
 
-## Features
+## Overview
 
-- Add new tasks to the list
-- Delete existing tasks
-- Update task details
-- View all tasks
-- Mark tasks as complete
+This application implements a multi-user todo system with the following features:
+- Secure user authentication with Better Auth and JWT tokens
+- Task management (CRUD operations) with user isolation
+- Priority levels and due dates for tasks
+- Filtering and sorting capabilities
+- Responsive web interface
 
-## Project Structure
+## Tech Stack
 
-- `.specify/memory/constitution.md` — Project principles
-- `specs_history/` — Feature specifications
-- `src/` — Source code
-- `tests/` — Unit tests
-- `README.md` — This file
-- `CLAUDE.md` — Claude Code instructions
+### Backend
+- FastAPI: Modern Python web framework
+- SQLModel: SQL database modeling
+- PyJWT: JWT token handling
+- PostgreSQL: Production database (Neon-compatible)
+- Uvicorn: ASGI server
 
-## Requirements
+### Frontend
+- Next.js 16+: React framework with App Router
+- TypeScript: Type-safe JavaScript
+- Better Auth: Authentication solution
 
-- Python 3.13+
-- UV package manager
+## Environment Variables
 
-## Usage
+Create a `.env` file based on `.env.example`:
 
-The application is designed to be run as a command-line interface where users can interact with their todo list through various commands.
+```bash
+# Better Auth Secret - used for signing JWT tokens
+BETTER_AUTH_SECRET=changeme
 
-## Development Approach
+# Database URL for Neon Postgres
+DATABASE_URL=postgresql://user:pass@host:5432/db
 
-This project follows Spec-Driven Development (SDD) using Claude Code + Spec-Kit Plus:
-- Spec → Plan → Tasks → Implement
-- All code is agent-generated (no manual coding)
-- Test-first approach with TDD
-- Clean Python architecture with type hints
-- In-memory storage only# Todo_List
+# Next.js public auth origin
+NEXT_PUBLIC_AUTH_ORIGIN=http://localhost:3000
+
+# JWT Secret for backend verification
+JWT_SECRET=changeme
+```
+
+## Development Setup
+
+### Backend Setup
+
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
+
+2. Install dependencies (using Poetry):
+```bash
+poetry install
+```
+
+3. Activate the virtual environment:
+```bash
+poetry shell
+```
+
+4. Run the development server:
+```bash
+cd src
+python -m main
+```
+
+Or using Uvicorn directly:
+```bash
+uvicorn src.main:app --reload --port 8000
+```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+```bash
+cd frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Run the development server:
+```bash
+npm run dev
+```
+
+### Docker Setup (Recommended)
+
+1. Make sure Docker Desktop is installed and running
+
+2. From the project root, run:
+```bash
+docker-compose up --build
+```
+
+3. The application will be available at:
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:8000
+   - API Docs: http://localhost:8000/docs
+
+4. To stop the application:
+```bash
+docker-compose down
+```
+
+Alternatively, you can use the test script:
+```bash
+./scripts/test-docker.sh
+```
+
+## API Endpoints
+
+All API requests must include the `Authorization: Bearer <token>` header.
+
+### Task Endpoints
+
+- `GET /api/users/{user_id}/tasks` - Get all tasks for a user
+  - Query parameters: `status` (all|pending|completed), `sort` (created|title|due_date), `order` (asc|desc)
+- `POST /api/users/{user_id}/tasks` - Create a new task
+- `GET /api/users/{user_id}/tasks/{task_id}` - Get a specific task
+- `PUT /api/users/{user_id}/tasks/{task_id}` - Update a task
+- `DELETE /api/users/{user_id}/tasks/{task_id}` - Delete a task
+- `PATCH /api/users/{user_id}/tasks/{task_id}/complete` - Update completion status
+
+### Error Codes
+
+- `401 Unauthorized` - Missing or invalid JWT token
+- `403 Forbidden` - Valid token but user doesn't own the resource
+- `404 Not Found` - Resource doesn't exist
+- `422 Unprocessable Entity` - Validation error in request data
+
+## Running Tests
+
+### Backend Tests
+
+```bash
+cd backend
+python -m pytest
+```
+
+### Frontend Tests
+
+```bash
+cd frontend
+npm test
+```
+
+## Persistence Verification
+
+To verify data persistence in Neon:
+
+1. Start the backend:
+```bash
+cd backend && uvicorn src.main:app --reload --port 8000
+```
+
+2. Create a few tasks through the API or UI
+
+3. Restart the backend service
+
+4. Verify that the tasks still exist and are accessible
+
+## Neon Development Tips
+
+- Use connection pooling for better performance
+- Monitor query performance with Neon's built-in tools
+- Use branching for safe development environments
+- Leverage Neon's auto-scaling features
+
+## Better Auth Notes
+
+- The application uses Better Auth for JWT token generation
+- Tokens are verified on the backend using the `BETTER_AUTH_SECRET`
+- User sessions are managed securely on the frontend
+- Ensure `NEXT_PUBLIC_AUTH_ORIGIN` is correctly set for your deployment
+
+## Phase Status
+
+- **Current Phase**: 2
+- **Phase Status**: in_progress
+- **Scope Limit**: phase_2_only
+
+## Contributing
+
+1. Follow the spec-first workflow: create/update specs → create plan → implement tasks → run tests → commit
+2. All production code must be generated by Claude Code agents
+3. Human edits are limited to docs/CLAUDE/.env.example unless spec allows otherwise
+4. Add new dependencies only after adding spec justification
+
+## License
+
+[Specify license here]

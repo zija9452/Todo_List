@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  todo-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo_backend_service
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql://neondb_owner:secret_password@todo-db:5432/todo_db
+      - BETTER_AUTH_SECRET=supersecret_better_auth_key_for_todo_app
+      - JWT_SECRET=supersecret_jwt_key_for_todo_app
+    depends_on:
+      - todo-db
+    networks:
+      - todo-network
+
+  todo-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo_frontend_service
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8001
+      - NEXT_PUBLIC_AUTH_ORIGIN=http://localhost:3001
+    depends_on:
+      - todo-backend
+    networks:
+      - todo-network
+
+  todo-db:
+    image: postgres:15
+    container_name: todo_postgres_db
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: neondb_owner
+      POSTGRES_PASSWORD: secret_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - todo_postgres_data:/var/lib/postgresql/data
+    networks:
+      - todo-network
+
+volumes:
+  todo_postgres_data:
+
+networks:
+  todo-network:
+    driver: bridge
